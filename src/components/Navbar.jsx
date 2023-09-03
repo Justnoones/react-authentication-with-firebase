@@ -1,11 +1,15 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Link, useNavigate  } from 'react-router-dom'
 import useTheme from '../hooks/useTheme';
 import moon from '../assets/moon.svg';
 import sun from '../assets/sun.svg';
 import useSignout from '../hooks/useSiginout';
+import { AuthContext } from '../context/AuthContext';
 
 export default function Navbar() {
+
+  let { user } = useContext(AuthContext);
+  console.log(user);
 
   let navigate = useNavigate();
 
@@ -62,11 +66,13 @@ export default function Navbar() {
             <img src='https://i.pinimg.com/474x/40/3c/6e/403c6e5bd46ac212351fd80f63a9849f.jpg' className='w-full rounded-full' />
           </div>
           <div className='w-10 text-center'>
-            {!isDark && <img src={sun} className='w-full cursor-pointer' onClick={e => changeContext("dark")} />}
-            {isDark && <img src={moon} className='w-full cursor-pointer' onClick={e => changeContext("light")} />}
+            {!isDark && <img src={sun} className='w-full cursor-pointer' onClick={() => changeContext("dark")} />}
+            {isDark && <img src={moon} className='w-full cursor-pointer' onClick={() => changeContext("light")} />}
           </div>
-          <div>
-            <button onClick={signOutUser} className={`${isDark ? "bg-white text-black" : "bg-black text-white"} px-2 py-2 text-sm rounded-lg`}>Logout</button>
+          <div className='space-x-3'>
+            {!user && <Link to="/login" className={`${isDark ? "text-white" : "text-black"} border border-primary px-2 py-2 text-sm rounded-lg`}>Login</Link>}
+            {!user && <Link to="/register" className={`bg-primary text-white px-2 py-2 text-sm rounded-lg`}>Logout</Link>}
+            {!! user && <button onClick={signOutUser} className={`${isDark ? "bg-white text-black" : "bg-black text-white"} px-2 py-2 text-sm rounded-lg`}>Logout</button>}
           </div>
         </li>
       </ul>
