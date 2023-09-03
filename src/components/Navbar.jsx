@@ -3,12 +3,24 @@ import { Link, useNavigate  } from 'react-router-dom'
 import useTheme from '../hooks/useTheme';
 import moon from '../assets/moon.svg';
 import sun from '../assets/sun.svg';
+import useSignout from '../hooks/useSiginout';
 
 export default function Navbar() {
 
   let navigate = useNavigate();
+
   let [search, setSearch] = useState("");
+
   let { isDark, changeContext } = useTheme();
+
+  let { logOut } = useSignout();
+
+  let signOutUser = async (e) => {
+    e.preventDefault();
+    await logOut();
+    navigate("/login");
+  }
+
   let searchBook = e => {
     e.preventDefault();
     navigate(`/?q=${search}`);
@@ -52,6 +64,9 @@ export default function Navbar() {
           <div className='w-10 text-center'>
             {!isDark && <img src={sun} className='w-full cursor-pointer' onClick={e => changeContext("dark")} />}
             {isDark && <img src={moon} className='w-full cursor-pointer' onClick={e => changeContext("light")} />}
+          </div>
+          <div>
+            <button onClick={signOutUser} className={`${isDark ? "bg-white text-black" : "bg-black text-white"} px-2 py-2 text-sm rounded-lg`}>Logout</button>
           </div>
         </li>
       </ul>
