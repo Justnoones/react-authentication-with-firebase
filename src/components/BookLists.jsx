@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import BookList from './BookList';
 import { useLocation } from 'react-router-dom';
 import db from '../firebase/index';
-import { collection, getDocs, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 
 export default function BookLists () {
   
