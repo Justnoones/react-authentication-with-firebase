@@ -1,16 +1,19 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
 import useTheme from '../hooks/useTheme';
-import db from '../firebase/index';
+import db, { storage } from '../firebase/index';
 import { doc, getDoc } from 'firebase/firestore';
 import useFirestore from '../hooks/useFireStore';
 import { AuthContext } from '../context/AuthContext';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
 export default function BookForm () {
 
   let { id } = useParams();
 
   let { isDark } = useTheme();
+
+  let { user } = useContext(AuthContext);
 
   let [ title, setTitle ] = useState("");
   let [ description, setDescription ] = useState("");
@@ -60,15 +63,26 @@ export default function BookForm () {
     setCategory("");
   }
 
-  let { user } = useContext(AuthContext);
+  let uploadToFirebase = async (file) => {
+    
+    let uniqueFileName = Date.now().toString()+"_"+file.name;
+    let path = `/covers/${user.uid}/${uniqueFileName}`;
+    let storageref = ref(storage, path);
+    let res = await uploadBytes(storageref, file);
+    let url = await getDownloadURL(storageref);
+    return url;
+  }
 
   let submitForm = async (e)=> {
     e.preventDefault();
+    let url = await uploadToFirebase(file);
+    console.log(url);
     let newBook = {
       title,
       description,
       categories,
-      uid: user.uid
+      uid: user.uid,
+      cover : url
     }
 
     if (isEdit) {

@@ -1,5 +1,4 @@
-import React from 'react'
-import gojo from '../assets/download.jpg';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import useTheme from '../hooks/useTheme';
 import trash from '../assets/trash.svg';
@@ -12,7 +11,7 @@ export default function BookList ({book}) {
 
   let deleteBook = async (e , id) => {
     e.preventDefault();
-    deleteDocument("books", id);
+    await deleteDocument("books", id);
   }
 
   let navigate = useNavigate();
@@ -26,7 +25,7 @@ export default function BookList ({book}) {
   return (
     <Link to={`books/${book.id}`} className={`min-h-[520px] border-2 shadow-sm text-center space-y-2 mt-2 ${isDark && "border-primary"}`}>
         <div>
-            <img src={gojo} className='w-full h-full' alt={"gojo"} />
+            <img src={book.cover} className='w-full h-full' alt={"gojo"} />
         </div>
         <div className="min-h-[50px]">
           <h1 className={`text-lg font-bold ${isDark && "text-white"}`}>{book.title}</h1>

@@ -1,6 +1,5 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import gojo from '../assets/download.jpg';
 import { Link } from 'react-router-dom';
 import useTheme from '../hooks/useTheme';
 import useFirestore from '../hooks/useFireStore';
@@ -21,7 +20,7 @@ export default function BookDetail () {
         {book && 
         <div className='grid grid-cols-2'>
             <div className='w-[80%] '>
-                <img src={gojo} className='w-full' />
+                <img src={book.cover} className='w-full' />
             </div>
             <div className='space-y-5'>
                 <h1 className={`text-2xl font-bold ${isDark && "text-white"}`}>{book.title}</h1>
