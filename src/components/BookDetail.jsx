@@ -1,33 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useParams } from 'react-router-dom';
 import gojo from '../assets/download.jpg';
 import { Link } from 'react-router-dom';
 import useTheme from '../hooks/useTheme';
-import db from '../firebase';
-import { doc, getDoc, onSnapshot } from 'firebase/firestore';
+import useFirestore from '../hooks/useFireStore';
 
 export default function BookDetail () {
+    
     let { id } = useParams();
-    let [error, setError] = useState(false);
-    let [loading, setLoading] = useState(false);
-    let [book, setBook] = useState(null);
     let { isDark } = useTheme();
 
-    useEffect(() => {
-        setLoading(true);
-        let ref = doc(db, "books", id);
-        onSnapshot(ref, doc => {
-            if (doc.exists()) {
-                let book = { id : doc.id, ...doc.data() };
-                setBook(book);
-                setLoading(false);
-                setError(false);
-            } else {
-                setError(true);
-                setLoading(false);
-            }
-        });
-    }, [id]);
+    let { getDocument } = useFirestore();
+
+    let { data : book, error, loading } = getDocument("books", id);
+
   return (
     <div className='mt-5'>
         {loading && <div className='text-center text-gray-500 font-bold text-2xl mt-3'>Loading...</div>}
@@ -41,7 +27,7 @@ export default function BookDetail () {
                 <h1 className={`text-2xl font-bold ${isDark && "text-white"}`}>{book.title}</h1>
                 <p className={`${isDark && "text-white"}`}>{book.description}</p>
                 <div className={`d flex flex-wrap gap-2`}>
-                {book.categories.map(category => (
+                {book.categories && book.categories.map(category => (
                     <span key={category} className='text-sm text-white bg-indigo-500 px-2 py-1 rounded-md'>{category}</span>
                 ) )}
                 </div>

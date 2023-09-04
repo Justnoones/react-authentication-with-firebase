@@ -3,18 +3,16 @@ import gojo from '../assets/download.jpg';
 import { Link, useNavigate } from 'react-router-dom';
 import useTheme from '../hooks/useTheme';
 import trash from '../assets/trash.svg';
-import { doc, deleteDoc } from 'firebase/firestore';
 import edit from '../assets/edit.svg';
-import db from '../firebase';
+import useFirestore from '../hooks/useFireStore';
 
 export default function BookList ({book}) {
+
+  let { deleteDocument } = useFirestore();
+
   let deleteBook = async (e , id) => {
     e.preventDefault();
-    let ref = doc(db, "books", id);
-    await deleteDoc(ref);
-    // setBooks(ps => {
-    //   return ps.filter(b => b.id!== id);
-    // })
+    deleteDocument("books", id);
   }
 
   let navigate = useNavigate();

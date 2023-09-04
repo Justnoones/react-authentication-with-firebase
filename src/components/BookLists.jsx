@@ -1,40 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 import BookList from './BookList';
-import { useLocation } from 'react-router-dom';
-import db from '../firebase/index';
-import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+import useFirestore from '../hooks/useFireStore';
+import { AuthContext } from '../context/AuthContext';
 
 export default function BookLists () {
-  
-  let location = useLocation();
-  let param = new URLSearchParams(location.search);
-  let searchValue = param.get('q');
-  let [error, setError] = useState(false);
-  let [loading, setLoading] = useState(false);
-  let [books, setBooks] = useState([]);
-  useEffect(() => {
-    setLoading(true);
-    let ref = collection(db, 'books');
-    let q = query(ref, orderBy('date', 'desc'))
-    onSnapshot(q, docs => {
-      if (docs.empty) {
-        setLoading(false);
-        setError("no documents found.");
-      } else {
-        let books = [];
-        docs.forEach(doc => {
-          let book = {
-            id : doc.id,
-            ...doc.data()
-          }
-          books = [...books, book];
-        })
-        setLoading(false);
-        setBooks(books);
-        setError(null);
-      }
-    });
-  }, [])
+
+  let { getCollection } = useFirestore();
+
+  let { user } = useContext(AuthContext);
+
+  let { data : books, error, loading } = getCollection("books", ["uid", "==", user.uid]);
   
   return (
     <>

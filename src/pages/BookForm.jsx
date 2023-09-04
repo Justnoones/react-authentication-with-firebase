@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
 import useTheme from '../hooks/useTheme';
 import db from '../firebase/index';
-import { addDoc, collection, doc, getDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
+import useFirestore from '../hooks/useFireStore';
+import { AuthContext } from '../context/AuthContext';
 
 export default function BookForm () {
 
@@ -15,6 +17,8 @@ export default function BookForm () {
   let [ category, setCategory ] = useState("");
   let [ categories, setCategories ] = useState([]);
   let [ isEdit, setIsEdit ] = useState(false);
+
+  let { addCollection, updateDocument } = useFirestore();
 
   let navigate = useNavigate();
 
@@ -54,21 +58,21 @@ export default function BookForm () {
     setCategory("");
   }
 
+  let { user } = useContext(AuthContext);
+
   let submitForm = async (e)=> {
     e.preventDefault();
     let newBook = {
       title,
       description,
       categories,
-      date : serverTimestamp()
+      uid: user.uid
     }
 
     if (isEdit) {
-      let ref = doc(db, "books", id);
-      await updateDoc(ref, newBook);
+      await updateDocument("books", id, newBook);
     } else {
-      let ref = collection(db, "books");
-      addDoc(ref, newBook);
+      await addCollection("books", newBook);
     }
     navigate("/");
   }
@@ -109,7 +113,9 @@ export default function BookForm () {
             </div>
           </div>
           <div className="w-full px-3">
-            <button className='w-full text-white bg-indigo-500 px-2 py-1 rounded-lg'>{isEdit ? "Edit" : "Create"} Book</button>
+            <button className='w-full text-white bg-indigo-500 px-2 py-1 rounded-lg'>
+              {isEdit ? "Edit" : "Create"} Book
+            </button>
           </div>
         </div>
       </form>
