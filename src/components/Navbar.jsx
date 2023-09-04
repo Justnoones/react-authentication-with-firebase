@@ -9,7 +9,6 @@ import { AuthContext } from '../context/AuthContext';
 export default function Navbar() {
 
   let { user } = useContext(AuthContext);
-  console.log(user);
 
   let navigate = useNavigate();
 
@@ -71,7 +70,7 @@ export default function Navbar() {
           </div>
           <div className='space-x-3'>
             {!user && <Link to="/login" className={`${isDark ? "text-white" : "text-black"} border border-primary px-2 py-2 text-sm rounded-lg`}>Login</Link>}
-            {!user && <Link to="/register" className={`bg-primary text-white px-2 py-2 text-sm rounded-lg`}>Logout</Link>}
+            {!user && <Link to="/register" className={`bg-primary text-white px-2 py-2 text-sm rounded-lg`}>Register</Link>}
             {!! user && <button onClick={signOutUser} className={`${isDark ? "bg-white text-black" : "bg-black text-white"} px-2 py-2 text-sm rounded-lg`}>Logout</button>}
           </div>
         </li>
