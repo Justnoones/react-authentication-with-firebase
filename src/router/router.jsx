@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import Home from '../pages/Home';
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 import Layout from '../Layouts/Layout';
 import BookDetail from '../components/BookDetail';
 import NotFound404Page from '../components/NotFound404Page';
@@ -12,6 +12,10 @@ import { AuthContext } from '../context/AuthContext';
 
 export default function Router() {
 
+  let { authReady, user } = useContext(AuthContext)
+
+  const isAuthenicated = Boolean(user);
+
   const router = createBrowserRouter([
     {
       path: "/",
@@ -19,31 +23,27 @@ export default function Router() {
       children: [
         {
           path: "",
-          element: <Home />
-        },
-        {
-          path: "/books",
-          element: <Home />
+          element: isAuthenicated ? <Home /> : <Navigate to="login" />
         },
         {
           path: "/books/:id",
-          element: <BookDetail />
+          element: isAuthenicated ? <BookDetail /> : <Navigate to="login" />
         },
         {
           path: "/create",
-          element: <BookForm />
+          element: isAuthenicated ? <BookForm /> : <Navigate to="login" />
         },
         {
           path: "/edit/:id",
-          element: <BookForm />
+          element: isAuthenicated ? <BookForm /> : <Navigate to="login" />
         },
         {
           path: "/register",
-          element: <Register />
+          element: !isAuthenicated ? <Register /> : <Navigate to="/" />
         },
         {
           path: "/login",
-          element: <Login />
+          element: !isAuthenicated ? <Login /> : <Navigate to="/" />
         },
         {
           path: "*",
@@ -52,8 +52,6 @@ export default function Router() {
       ]
     },
   ]);
-
-  let { authReady } = useContext(AuthContext)
 
   return (
     authReady && <RouterProvider router={router} />
